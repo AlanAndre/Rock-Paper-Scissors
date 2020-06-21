@@ -1,0 +1,50 @@
+from random import choice
+
+running = True
+moves = ['scissors', 'rock', 'paper']
+user_name = input('Enter your name:')
+print(f'Hello, {user_name}')
+user_score = 0
+rating = [line.split() for line in open("rating.txt", "r").readlines()]
+rating = {name: int(score) for name, score in rating}
+if user_name in rating.keys():
+    user_score = int(rating[user_name])
+user_rules = input()
+if user_rules:
+    moves = user_rules.split(',')
+print("Okay, let's start")
+
+
+def rps():
+    global user_score
+    comp_move = choice(moves)
+    steps = moves.index(user_move) - len(moves) // 2
+    moves_interchanged = moves[:]
+    if moves.index(user_move) != len(moves) // 2:
+        if steps > 0:
+            for i in range(steps):
+                moves_interchanged.append(moves_interchanged.pop(0))
+        else:
+            for i in range(abs(steps)):
+                moves_interchanged.insert(0, moves_interchanged.pop())
+    if moves_interchanged.index(comp_move) > moves_interchanged.index(user_move):
+        print(f'Sorry, but computer chose {comp_move}')
+    elif comp_move == user_move:
+        print(f'There is a draw ({user_move})')
+        user_score += 50
+    elif moves_interchanged.index(comp_move) < moves_interchanged.index(user_move):
+        print(f'Well done. Computer chose {comp_move} and failed')
+        user_score += 100
+
+
+while running:
+    user_move = input()
+    if user_move == '!exit':
+        print('Bye!')
+        running = False
+    elif user_move == '!rating':
+        print(f'Your rating: {user_score}')
+    elif user_move in moves:
+        rps()
+    else:
+        print('Invalid output')
